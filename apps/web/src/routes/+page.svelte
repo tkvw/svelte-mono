@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { add } from '@repo/math/add';
 	import { MyCounterButton } from '@repo/ui';
+	import { add } from '@tkvw/math';
 </script>
 
 <h1>Web</h1>

@@ -16,7 +16,7 @@
 	},
 	"dependencies": {
 		"@repo/ui": "workspace:*",
-		"@repo/math": "workspace:*"
+		"@tkvw/math": "workspace:*"
 	},
 	"devDependencies": {
 		"@playwright/test": "^1.42.1",
