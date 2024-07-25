@@ -5,6 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Listen for Xdebug",
+            "type": "php",
+            "request": "launch",
+            "port": 9003,
+            "pathMappings": {
+                "/var/www/html/wp-content/plugins/my-plugin": "${workspaceRoot}/apps/wordpress",
+                "/var/www/html": "${workspaceRoot}/apps/wordpress/htdocs"
+            }
+        },
+        {
             "name": "Launch via NPM",
             "request": "launch",
             "runtimeArgs": [
