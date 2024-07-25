@@ -1,0 +1,5 @@
+dlf.aardenburg2.local dlf.aardenburg2.nl {
+    tls /etc/caddy/certs/_wildcard.aardenburg2.nl+1.pem /etc/caddy/certs/_wildcard.aardenburg2.nl+1-key.pem
+
+    reverse_proxy wp:80
+}
