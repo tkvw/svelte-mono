@@ -1,0 +1,37 @@
+{
+  "name": "@tkvw/xstate-router",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build": "tsup src/index.ts --minify --dts --format cjs,esm --out-dir dist"
+  },
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    }
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "import": "./dist/index.d.ts",
+        "types": "./dist/index.js"
+      }
+    }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "peerDependencies": {
+    "xstate": "^5.15.0"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "tsup": "^8.2.3",
+    "vitest": "^2.0.0"
+  },
+  "dependencies": {
+    "reselect": "^5.1.1"
+  }
+}
