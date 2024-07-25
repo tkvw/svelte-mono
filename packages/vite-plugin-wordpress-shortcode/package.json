@@ -1,0 +1,48 @@
+{
+  "name": "@tkvw/vite-plugin-wordpress-shortcode",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "files": [
+    "dist",
+    "templates"
+  ],
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./src/plugin.ts",
+      "import": "./dist/plugin.js"
+    },
+    "./client": {
+      "types": "./src/client.ts",
+      "import": "./dist/client.js"
+    }
+  },
+  "publishConfig": {
+    "exports": {
+      "./package.json": "./package.json",
+      ".": {
+        "types": "./dist/plugin.d.ts",
+        "import": "./dist/plugin.js"
+      },
+      "./client": {
+        "types": "./dist/client.d.ts",
+        "import": "./dist/client.js"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsup --entry src/plugin.ts --entry src/client.ts --dts --minify --format esm --out-dir dist"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "peerDependencies": {
+    "vite": "^5.3.4"
+  },
+  "devDependencies": {
+    "tsup": "^8.2.3",
+    "@repo/typescript-config": "workspace:*"
+  }
+}
