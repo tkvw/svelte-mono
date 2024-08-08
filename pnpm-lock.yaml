@@ -110,6 +110,33 @@ importers:
         specifier: ^5.3.4
         version: 5.3.4(@types/node@20.14.12)
 
+  apps/wordpress/webapp:
+    devDependencies:
+      '@sveltejs/vite-plugin-svelte':
+        specifier: ^3.1.1
+        version: 3.1.1(svelte@4.2.18)(vite@5.3.4(@types/node@20.14.12))
+      '@tkvw/vite-plugin-wordpress-shortcode':
+        specifier: workspace:*
+        version: link:../../../packages/vite-plugin-wordpress-shortcode
+      '@tsconfig/svelte':
+        specifier: ^5.0.4
+        version: 5.0.4
+      svelte:
+        specifier: ^4.2.18
+        version: 4.2.18
+      svelte-check:
+        specifier: ^3.8.4
+        version: 3.8.4(postcss-load-config@3.1.4(postcss@8.4.40))(postcss@8.4.40)(svelte@4.2.18)
+      tslib:
+        specifier: ^2.6.3
+        version: 2.6.3
+      typescript:
+        specifier: ^5.2.2
+        version: 5.5.4
+      vite:
+        specifier: ^5.3.4
+        version: 5.3.4(@types/node@20.14.12)
+
   packages/config-eslint:
     dependencies:
       '@typescript-eslint/eslint-plugin':
@@ -150,7 +177,7 @@ importers:
         version: link:../config-typescript
       tsup:
         specifier: ^8.2.3
-        version: 8.2.3(@microsoft/api-extractor@7.47.2(@types/node@20.14.12))(postcss@8.4.40)(typescript@5.5.4)
+        version: 8.2.3(@microsoft/api-extractor@7.47.2)(postcss@8.4.40)(typescript@5.5.4)
 
   packages/xstate-router:
     dependencies:
@@ -166,10 +193,29 @@ importers:
         version: link:../config-typescript
       tsup:
         specifier: ^8.2.3
-        version: 8.2.3(@microsoft/api-extractor@7.47.2(@types/node@20.14.12))(postcss@8.4.40)(typescript@5.5.4)
+        version: 8.2.3(@microsoft/api-extractor@7.47.2)(postcss@8.4.40)(typescript@5.5.4)
       vitest:
         specifier: ^2.0.0
         version: 2.0.4(@types/node@20.14.12)(jsdom@24.1.1)
+
+  packages/xstate-router-svelte:
+    dependencies:
+      '@tkvw/xstate-router':
+        specifier: workspace:*
+        version: link:../xstate-router
+      '@xstate/svelte':
+        specifier: ^3.0.3
+        version: 3.0.3(svelte@4.2.18)(xstate@5.15.0)
+      xstate:
+        specifier: ^5.15.0
+        version: 5.15.0
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../config-typescript
+      tsup:
+        specifier: ^8.2.3
+        version: 8.2.3(@microsoft/api-extractor@7.47.2)(postcss@8.4.40)(typescript@5.5.4)
 
 packages:
 
@@ -4736,7 +4782,7 @@ snapshots:
 
   tslib@2.6.3: {}
 
-  tsup@8.2.3(@microsoft/api-extractor@7.47.2(@types/node@20.14.12))(postcss@8.4.40)(typescript@5.5.4):
+  tsup@8.2.3(@microsoft/api-extractor@7.47.2)(postcss@8.4.40)(typescript@5.5.4):
     dependencies:
       bundle-require: 5.0.0(esbuild@0.23.0)
       cac: 6.7.14

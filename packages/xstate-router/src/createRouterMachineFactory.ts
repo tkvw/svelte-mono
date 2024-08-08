@@ -1,19 +1,16 @@
-import { assign, fromCallback, setup } from 'xstate';
-import { IContext, RouterMachineFactoryOptions, RouterMachineOptions } from './types';
+import { AnyEventObject, assertEvent, assign, fromCallback, setup } from 'xstate';
+import { IRouterMachineContext, IRouterMachineFactoryOptions, IRouterMachineOptions } from './types';
 
-export function createRouterMachineFactory(options: RouterMachineFactoryOptions = {}) {
+export function createRouterMachineFactory<TData = any>(options: IRouterMachineFactoryOptions = {}) {
   const { actionPrefix = 'navigation' } = options;
   const isSsr = typeof window === 'undefined';
 
   const GOTO_TYPE = `${actionPrefix}.goto`;
-  function goto(url: URL | string, data?: any, options: { replace?: boolean } = {}) {
-    const href = url instanceof URL ? url.toString() : url;
-    const finalUrl = new URL(href, isSsr ? undefined : window.location.href);
+  function goto(url: string | URL, data?: TData) {
     return {
       type: GOTO_TYPE,
-      url: finalUrl,
-      data,
-      options
+      url,
+      data
     };
   }
 
@@ -21,36 +18,39 @@ export function createRouterMachineFactory(options: RouterMachineFactoryOptions 
 
   const machineFactory = setup({
     types: {
-      context: {} as IContext,
+      context: {} as IRouterMachineContext,
       events: {} as TEvents
     },
-    guards: {
-      url_changed: ({ context, event }) => {
-        return context.url.toString() !== event.url.toString();
-      }
-    },
     actions: {
-      push_state: ({ context, event }) => {
-        if (event.type !== GOTO_TYPE) return;
+      assignEvent: assign(({context,event}) => {
+        const {url: baseUrl} = context;
+        const {data,url} = event;
 
-        const { data, url, options } = event;
-        if (!options?.replace) return;
-        window.history.pushState(data ?? {}, '', url.href);
+        const nextUrl = url instanceof URL? url: new URL(url,baseUrl);
+        return {
+          url: nextUrl,
+          data: data
+        };
+      }),
+      pushState: ({ context, event }) => {
+        const {data,url} = context;
+        
+        if(window.location.href === url.href){
+          return;
+        }
+        window.history.pushState(data ?? {}, '', url);
       }
     },
     actors: {
-      router: fromCallback(({ sendBack }) => {
+      router: fromCallback<TEvents,{base: string}>(({ input,sendBack }) => {
+        const {base} = input;
         const start = () => {
-          function updateUrl(url = window.location.href, replace = false) {
-            sendBack(goto(new URL(url, window.location.href), history.state, { replace }));
-          }
-
+          
           let lastKbdEv: KeyboardEvent | undefined;
           const events = {
-            hashchange: updateUrl,
             popstate: (event: PopStateEvent) => {
               event.preventDefault();
-              updateUrl();
+              sendBack(goto(window.location.href,history.state));
             },
             keydown: (event: KeyboardEvent) => {
               lastKbdEv = event;
@@ -65,11 +65,11 @@ export function createRouterMachineFactory(options: RouterMachineFactoryOptions 
                   // if (preventChange_ && preventChange_() === true) return event.preventDefault();
                   if (targetElement.hasAttribute('data-native-router')) return;
                   const href = targetElement.getAttribute('href') || '';
-                  // do not handle external links
-                  if (!/^http?s\:\/\//.test(href)) {
-                    if (href) updateUrl(href, true);
-                    return event.preventDefault();
-                  }
+
+                  if(!href || base && !href.startsWith(base) || /^http?s\:\/\//.test(href)) return;
+                  
+                  sendBack(goto(href));
+                  return event.preventDefault();
                 }
                 targetElement = targetElement.parentElement || document.body;
               }
@@ -101,7 +101,7 @@ export function createRouterMachineFactory(options: RouterMachineFactoryOptions 
     }
   });
 
-  function createRouterMachine({ base = '', data, url }: RouterMachineOptions = {}) {
+  function createRouterMachine({ base = '', data, url,strategy = 'url' }: IRouterMachineOptions = {}) {
     if (isSsr && !url) {
       throw new Error('URL must be provided in server-side environment');
     } else if (!isSsr) {
@@ -112,6 +112,7 @@ export function createRouterMachineFactory(options: RouterMachineFactoryOptions 
     const machine = machineFactory.createMachine({
       context: {
         base,
+        strategy,
         url: url!,
         data
       },
@@ -119,19 +120,16 @@ export function createRouterMachineFactory(options: RouterMachineFactoryOptions 
       states: {
         browser: {
           invoke: {
+            id: 'router',
+            input: ({context}) => ({base: context.base}),
             src: 'router',
-            id: 'router'
           },
           on: {
             [GOTO_TYPE]: [
               {
-                guard: 'url_changed',
                 actions: [
-                  assign({
-                    data: ({ event }) => event.data,
-                    url: ({ event }) => event.url
-                  }),
-                  'push_state'
+                  'assignEvent',
+                  'pushState'
                 ]
               }
             ]
@@ -141,12 +139,8 @@ export function createRouterMachineFactory(options: RouterMachineFactoryOptions 
           on: {
             [GOTO_TYPE]: [
               {
-                guard: 'url_changed',
                 actions: [
-                  assign({
-                    data: ({ event }) => event.data,
-                    url: ({ event }) => event.url
-                  })
+                  'assignEvent'
                 ]
               }
             ]

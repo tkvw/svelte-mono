@@ -1,0 +1,25 @@
+{
+  "name": "@tkvw/xstate-router-svelte",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "peerDependencies": {
+    "xstate": "^5.15.0"
+  },
+  "dependencies": {
+    "@tkvw/xstate-router": "workspace:*",
+    "@xstate/svelte": "^3.0.3"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "tsup": "^8.2.3"
+    
+  }
+}

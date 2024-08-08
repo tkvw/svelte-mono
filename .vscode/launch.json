@@ -10,8 +10,8 @@
             "request": "launch",
             "port": 9003,
             "pathMappings": {
+                "/var/www/html": "${workspaceRoot}/apps/wordpress/.htdocs",
                 "/var/www/html/wp-content/plugins/my-plugin": "${workspaceRoot}/apps/wordpress",
-                "/var/www/html": "${workspaceRoot}/apps/wordpress/.htdocs"
             }
         },
         {

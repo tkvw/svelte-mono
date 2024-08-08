@@ -3,8 +3,9 @@ FROM wordpress:6-php8.2
 
 # Installeer extra PHP extensies (voorbeeld)
 RUN apt-get update && \
-    apt-get install -y libxml2-dev && \
-    docker-php-ext-install soap
+    apt-get install -y libxml2-dev python3 python3-pip && \
+    docker-php-ext-install soap 
+
 
 # Kopieer een aangepast php.ini-bestand (optioneel)
 #COPY php.ini /usr/local/etc/php/

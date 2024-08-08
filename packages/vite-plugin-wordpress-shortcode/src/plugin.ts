@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PluginOption, ResolvedConfig } from 'vite';
+
 export interface WordpressPluginOptions {
   devUrl?: string;
   entry?: string;
@@ -43,6 +44,10 @@ export default function wordpressShortcodePlugin(
   function writeTemplate(url: string, substitutions: Record<string, string> = {}) {
     const outdir = _config?.build?.outDir!;
     const templatePath = fileURLToPath(url);
+
+    if(!fs.existsSync(outdir)){
+      fs.mkdirSync(outdir,{recursive:true});
+    }
 
     substitutions = {
       ...substitutions,
@@ -89,7 +94,7 @@ export default function wordpressShortcodePlugin(
           output: {
             assetFileNames: 'assets/[name]-[hash][extname]',
             chunkFileNames: 'chunks/[name]-[hash].js',
-            entryFileNames: 'entires/[name]-[hash].js'
+            entryFileNames: 'entries/[name]-[hash].js'
           }
         }
       };
@@ -126,32 +131,48 @@ export default function wordpressShortcodePlugin(
 
       const css = assets
         .filter((x) => x.endsWith('.css'))
-        .map((x) => `<link rel="stylesheet" href="${x}">`)
-        .join('\n');
+        .map((x) => `<link rel="stylesheet" href="{$plugin_dir_url}${x}">`)
+        .join('');
       const js = chunks
         .filter((x) => x.endsWith('.js'))
-        .map((x) => `<link rel="modulepreload" href="${x}">`)
-        .join('\n');
+        .map((x) => `<link rel="modulepreload" href="{$plugin_dir_url}${x}">`)
+        .join('');
 
-      const script = `
-        <div style="display: contents">
-            <script>          
-              const attributes = JSON.parse('$\{jsonAttributes\}');
-              const contents = '$\{contents\}';
-              const target = document.currentScript.parentElement;
-              await('${entry}').then(({default: startApp}) => startApp({
-                  target,
-                  attributes
-                  contents,
-                  shortcode: '${shortcode}'
-                }));
-            </script>  
-          </div>
+        const script = `        
+        <div data-wps="${shortcode}" data-wps-id="{$id}"></div>        
           `;
+
+               
+      // const script = `
+      //   <div style="display: contents">
+      //       <script>          
+      //         const attributes = JSON.parse('\{$jsonAttributes\}');
+      //         const contents = \`\{$contents\}\`;
+      //         console.log(shadowRoot);
+      //         const target = document.currentScript.parentElement;
+      //         import('{$plugin_dir_url}${entry}').then(({default: startApp}) => startApp({
+      //             target,
+      //             attributes,
+      //             contents,
+      //             shortcode: '${shortcode}'
+      //           }));
+      //       </script>  
+      //     </div>
+      //     `;
+
+      const footerscript = `
+        <script>
+          // Start Wordpress Shortcode plugin components
+          import('{$plugin_dir_url}${entry}').then(({default:start}) => {
+            start('${shortcode}',${shadowDom});
+          });
+        </script>
+      `;
 
       writeTemplate(production, {
         SHORTCODE_SCRIPT: script,
-        SHORTCODE_HEAD: [css, js].join('\n')
+        SHORTCODE_HEAD: [css, js].join(''),
+        SHORTCODE_FOOTER: footerscript
       });
     }
   };

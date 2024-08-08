@@ -19,8 +19,6 @@ services:
      depends_on:
        - db
      restart: always
-     ports:
-       - "8000:80"
      volumes:
        - ./.htdocs:/var/www/html
        - ./:/var/www/html/wp-content/plugins/my-plugin
@@ -32,6 +30,8 @@ services:
        WORDPRESS_DB_NAME: wordpress
        WORDPRESS_TABLE_PREFIX: wp_
        WORDPRESS_DEBUG: '1'
+     extra_hosts:
+       - "host.docker.internal:host-gateway"
 
    wpcli:
     image: wordpress:cli

@@ -33,7 +33,7 @@
     }
   },
   "scripts": {
-    "build": "tsup --entry src/plugin.ts --entry src/client.ts --dts --minify --format esm --out-dir dist"
+    "build": "tsup --entry src/plugin.ts --entry src/client.ts --dts --format esm --out-dir dist"
   },
   "keywords": [],
   "author": "",

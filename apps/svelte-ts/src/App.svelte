@@ -14,7 +14,7 @@
 
   const { snapshot, send, actorRef } = useMachine(
     createRouterMachine({
-      base: '/xxx'
+      base: '/my/shop'
     })
   );
 
@@ -60,6 +60,8 @@
     <a href="/somewhere/xxx">somewhere</a>
     <a href="/somewhere/xxx?x=1">somewhere 1</a>
     <a href="/blog/2354">Blog</a>
+    <a href="/my/shop#xfdf" data-native-router>data-native-link</a> 
+
   </div>
   <div class="card">
     {#await import('./lib/Counter.svelte') then { default: CounterComponent }}

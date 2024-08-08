@@ -3,6 +3,7 @@
 
 function SHORTCODE_PREFIX_shortcodeBody($attributes, $content) {
     $jsonAttributes = json_encode($attributes);
+    
     return <<<HTML
         <script id="SHORTCODE_CODE-attributes" type="application/json">
             {$jsonAttributes}
@@ -10,13 +11,14 @@ function SHORTCODE_PREFIX_shortcodeBody($attributes, $content) {
         <template id="SHORTCODE_CODE-content">
             {$content}
         </template>
+        <div id="app"></div>
         SHORTCODE_SCRIPT
     HTML;
 }
 
 
 add_shortcode("SHORTCODE_CODE", function ($attributes, $content) {
-    $injectioon = SHORTCODE_PREFIX_shortcodeBody($attributes, $content);
+    $injection = SHORTCODE_PREFIX_shortcodeBody($attributes, $content);
 
     if (SHORTCODE_SHADOW) {
         return <<<HTML
